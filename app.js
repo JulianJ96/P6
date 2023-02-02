@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-
-
+const path = require('path');
+const dotenv = require('dotenv');
+require('dotenv').config();
 
 
 mongoose.connect('mongodb+srv://julianj96:otakuJj9672$@jucluster0.2g5jb2b.mongodb.net/?retryWrites=true&w=majority')
@@ -15,11 +16,6 @@ mongoose.connect('mongodb+srv://julianj96:otakuJj9672$@jucluster0.2g5jb2b.mongod
     });
 
 
-app.use(express.json());
-
-
-
-
 app.use((req, res, next)  =>{
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token, Authorization');
@@ -28,13 +24,23 @@ app.use((req, res, next)  =>{
 });
 
 
+// Routers const
+
+const userRouter = require('./routers/user');
+const sauceRouter = require('./routers/sauce');
 
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use('/', express.static(path.join(__dirname, 'static')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
+// Routers
+app.use('/api/sauces', sauceRouter);
+app.use('/api/auth', userRouter);
 
-const userRoutes = require('./api/routes/user');
-app.use("/user", userRoutes);
+
 
 
 
